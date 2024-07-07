@@ -26,7 +26,8 @@ align-items: center;
 justify-content: center;
 
 img{
-    width: 80%;
+    width: 60%;
+
 }
 
 `
