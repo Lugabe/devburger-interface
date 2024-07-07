@@ -12,8 +12,8 @@ background-color: #9758A6;
 font-family: "Road Rage", sans-serif;
 font-weight: 400;
 font-style: normal;
-font-size: 30px;
-color: #fff;
+font-size: ${props => props.normal ? '30px' : '20px'};
+color: ${props => props.red ? '#c33' : '#fff'};
 align-items: center;
 
   
