@@ -10,13 +10,15 @@ import { toast } from 'react-toastify';
 
 const schema = yup
   .object({
+    name: yup.string().required('O nome é obrigatório!'),
     email: yup.string().email('Deve ser um e-mail valido!').required(' O e-mail é obrigatório'),
     password: yup.string().min(6, 'Deve conter no minimo 6 números').required('Digite uma senha'),
+    confirmPassword: yup.string().oneOf([yup.ref('password')], 'As senhas devem ser as mesmas.').required('Digite uma senha')
   })
   .required()
 
 
-export function Login() {
+export function Register() {
   const {
     register,
     handleSubmit,
@@ -26,17 +28,23 @@ export function Login() {
   })
 
   const onSubmit = async (data) => {
-    const response = await toast.promise(api.post('/session', {
-      email: data.email,
-      password: data.password
-    }),
-      {
-        pending: 'Verificando os seus dados...',
-        success: 'Seja Bem-vindo (a) 😉',
-        error: 'E-mail ou Senha Incorretos! 😮',
-      }
+    try {
+      const response = await toast.promise(api.post('/users', {
+        name: data.name,
+        email: data.email,
+        password: data.password
+      }),
+        {
+          pending: 'Verificando os seus dados...',
+          success: 'Cadastro efetuado com sucesso! 😉',
+          error: 'Ops, Algo deu errado...Tente novamente! 😮',
+        }
 
-    );
+      );
+    } catch (error) {
+      console.log(error.errors)
+    }
+
   }
 
 
@@ -46,13 +54,17 @@ export function Login() {
         <img src={Logo} alt="logo hamburguer" />
       </LeftContainer>
       <RightContainer>
-        <Title>
-          Olá, seja bem vindo ao <span>Dev Burguer!</span>
-          <br />
-          Acesse com seu <span>Login e senha.</span>
+        <Title purple={true}>
+          Criando Conta...
         </Title>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <InputContainer>
+            <label>Nome</label>
+            <input type="text" {...register("name")} />
+            <p>{errors?.name?.message}</p>
+          </InputContainer>
+
+          <InputContainer >
             <label>Email</label>
             <input type="email" {...register("email")} />
             <p>{errors?.email?.message}</p>
@@ -63,13 +75,17 @@ export function Login() {
             <input type="password" {...register("password")} />
             <p>{errors?.password?.message}</p>
           </InputContainer>
-          <p>
-            Esqueceu a senha? <a> Clique aqui! </a>
-          </p>
-          <Button type="submit" red={false} normal={true} >Entrar</Button>
+
+          <InputContainer >
+            <label>Confirmar Senha</label>
+            <input type="password" {...register("confirmPassword")} />
+            <p>{errors?.confirmPassword?.message}</p>
+          </InputContainer>
+
+          <Button type="submit" red={false} normal={true} >Criar Conta</Button>
         </Form >
         <p>
-          Não possui conta? <a> Clique aqui! </a>
+          Já possui conta? <a> Clique aqui! </a>
         </p>
       </RightContainer>
     </Container>
