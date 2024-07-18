@@ -29,20 +29,26 @@ export function Register() {
 
   const onSubmit = async (data) => {
     try {
-      const response = await toast.promise(api.post('/users', {
+      const { status } = await api.post('/users', {
         name: data.name,
         email: data.email,
         password: data.password
-      }),
-        {
-          pending: 'Verificando os seus dados...',
-          success: 'Cadastro efetuado com sucesso! 😉',
-          error: 'Ops, Algo deu errado...Tente novamente! 😮',
-        }
+      }, {
 
-      );
+        validateStatus: () => true,
+      })
+
+      if (status === 200 || status === 201) {
+        toast.success("Conta criada com sucesso!")
+      } else if (status === 409) {
+        toast.error("O e-mail já está cadastrado.")
+      } else {
+        throw new Error();
+      }
+
+
     } catch (error) {
-      console.log(error.errors)
+      toast.error("😥Falha no sistema! Tente novamente!")
     }
 
   }
